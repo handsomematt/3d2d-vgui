@@ -191,16 +191,18 @@ function _R.Panel:Paint3D2D()
 	inputWindows[ self ] = true
 	
 	-- Override think of DFrame's to correct the mouse pos by changing the active orientation
-	if not self.OThink then
-		self.OThink = self.Think
-		
-		self.Think = function()
-			origin = self.Origin
-			scale = self.Scale
-			angle = self.Angle
-			normal = self.Normal
+	if self.Think then
+		if not self.OThink then
+			self.OThink = self.Think
 			
-			self:OThink()
+			self.Think = function()
+				origin = self.Origin
+				scale = self.Scale
+				angle = self.Angle
+				normal = self.Normal
+				
+				self:OThink()
+			end
 		end
 	end
 	
