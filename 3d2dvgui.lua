@@ -85,15 +85,6 @@ end
 
 local inputWindows = {}
 
-function gui.MouseX()
-	local x, y = getCursorPos()
-	return x
-end
-function gui.MouseY()	
-	local x, y = getCursorPos()
-	return y
-end
-
 local function isMouseOver( pnl )
 	return pointInsidePanel( pnl, getCursorPos() )
 end
@@ -189,6 +180,18 @@ function _R.Panel:Paint3D2D()
 	
 	-- Add it to the list of windows to receive input
 	inputWindows[ self ] = true
+
+	-- Override gui.MouseX and gui.MouseY for certain stuff
+	local oldMouseX = gui.MouseX
+	local oldMouseY = gui.MouseY
+	local cx, cy = getCursorPos()
+
+	function gui.MouseX()
+		return cx / scale
+	end
+	function gui.MouseY()	
+		return cy / scale
+	end
 	
 	-- Override think of DFrame's to correct the mouse pos by changing the active orientation
 	if self.Think then
@@ -219,6 +222,9 @@ function _R.Panel:Paint3D2D()
 	self:SetPaintedManually( false )
 		self:PaintManual()
 	self:SetPaintedManually( true )
+
+	gui.MouseX = oldMouseX
+	gui.MouseY = oldMouseY
 end
 
 function vgui.End3D2D()
