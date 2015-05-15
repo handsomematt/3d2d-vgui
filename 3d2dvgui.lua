@@ -29,13 +29,8 @@ local scale = 0
 
 -- Helper functions
 
-local function planeLineIntersect( lineStart, lineEnd, planeNormal, planePoint )
-	local t = planeNormal:Dot( planePoint - lineStart ) / planeNormal:Dot( lineEnd - lineStart )
-	return lineStart + t * ( lineEnd - lineStart )
-end
-
 local function getCursorPos()
-	local p = planeLineIntersect( LocalPlayer():EyePos(), LocalPlayer():EyePos() + LocalPlayer():GetAimVector() * 16000, normal, origin )
+	local p = util.IntersectRayWithPlane(LocalPlayer():EyePos(), LocalPlayer():GetAimVector(), origin, normal)
 	local offset = origin - p
 	
 	local angle2 = angle:Angle()
