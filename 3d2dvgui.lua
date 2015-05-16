@@ -31,15 +31,22 @@ local scale = 0
 
 local function getCursorPos()
 	local p = util.IntersectRayWithPlane(LocalPlayer():EyePos(), LocalPlayer():GetAimVector(), origin, normal)
+
+	-- if their wasn't an intersection, don't calculate anything.
+	if not p then return 0, 0 end
+
 	local offset = origin - p
 	
 	local angle2 = angle:Angle()
 	angle2:RotateAroundAxis( normal, 90 )
 	angle2 = angle2:Forward()
 	
-	local x = Vector( offset.x * angle.x, offset.y * angle.y, offset.z * angle.z ):Length()
-	local y = Vector( offset.x * angle2.x, offset.y * angle2.y, offset.z * angle2.z ):Length()
-	
+	local offsetp = Vector(offset.x, offset.y, offset.z)
+	offsetp:Rotate(-normal:Angle())
+
+    local x = -offsetp.y
+    local y = offsetp.z
+
 	return x, y
 end
 
