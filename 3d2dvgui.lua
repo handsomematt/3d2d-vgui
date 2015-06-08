@@ -32,7 +32,7 @@ local scale = 0
 local function getCursorPos()
 	local p = util.IntersectRayWithPlane(LocalPlayer():EyePos(), LocalPlayer():GetAimVector(), origin, normal)
 
-	-- if their wasn't an intersection, don't calculate anything.
+	-- if there wasn't an intersection, don't calculate anything.
 	if not p then return 0, 0 end
 
 	local offset = origin - p
