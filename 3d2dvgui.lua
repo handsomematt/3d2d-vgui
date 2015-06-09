@@ -73,8 +73,10 @@ local function absolutePanelPos( pnl )
 	return x, y
 end
 
-local function pointInsidePanel( pnl, x, y )
-	local px, py = absolutePanelPos( pnl )
+local function pointInsidePanel( pnl, x, y, px, py )
+	if not (px and py) then
+		px, py = absolutePanelPos( pnl )
+	end
 	local sx, sy = pnl:GetSize()
 
 	x = x / scale
@@ -111,9 +113,15 @@ local function postPanelEvent( pnl, event, ... )
 	end
 end
 
-local function checkHover( pnl )
+local function checkHover( pnl, x, y, px, py )
+	if not (x and y) then
+		x,y=getCursorPos()
+	end
+	if not (px and py) then
+		px,py=absolutePanelPos( pnl )
+	end
 	pnl.WasHovered = pnl.Hovered
-	pnl.Hovered = isMouseOver( pnl )
+	pnl.Hovered = pointInsidePanel( pnl, x, y, px, py )
 	
 	if not pnl.WasHovered and pnl.Hovered then
 		if pnl.OnCursorEntered then pnl:OnCursorEntered() end
@@ -122,7 +130,7 @@ local function checkHover( pnl )
 	end
 
 	for child, _ in pairs( pnl.Childs or {} ) do
-		if ( child:IsValid() ) then checkHover( child ) end
+		if ( child:IsValid() and child:IsVisible() ) then checkHover( child, x, y, px, py ) end
 	end
 end
 
