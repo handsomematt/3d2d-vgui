@@ -111,9 +111,12 @@ local function postPanelEvent( pnl, event, ... )
 	end
 end
 
-local function checkHover( pnl )
+local function checkHover( pnl, x, y )
+	if not (x and y) then
+		x,y=getCursorPos()
+	end
 	pnl.WasHovered = pnl.Hovered
-	pnl.Hovered = isMouseOver( pnl )
+	pnl.Hovered = pointInsidePanel( pnl, x, y )
 	
 	if not pnl.WasHovered and pnl.Hovered then
 		if pnl.OnCursorEntered then pnl:OnCursorEntered() end
@@ -122,7 +125,7 @@ local function checkHover( pnl )
 	end
 
 	for child, _ in pairs( pnl.Childs or {} ) do
-		if ( child:IsValid() ) then checkHover( child ) end
+		if ( child:IsValid() and child:IsVisible() ) then checkHover( child, x, y ) end
 	end
 end
 
