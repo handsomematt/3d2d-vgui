@@ -241,14 +241,14 @@ end
 if not vguiCreate then vguiCreate = vgui.Create end
 function vgui.Create( class, parent )
 	local pnl = vguiCreate( class, parent )
+	if not pnl then return end
 	
 	pnl.Parent = parent
 	pnl.Class = class
 	
-	if parent then
+	if parent and type(parent) == "Panel" and IsValid(parent) then
 		if not parent.Childs then parent.Childs = {} end
 		parent.Childs[ pnl ] = true
 	end
-	
 	return pnl
 end
