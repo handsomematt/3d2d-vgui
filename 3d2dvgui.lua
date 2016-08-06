@@ -93,7 +93,7 @@ local function isMouseOver( pnl )
 end
 
 local function postPanelEvent( pnl, event, ... )
-	if ( not IsValid( pnl ) or not pointInsidePanel(pnl, getCursorPos()) ) then return false end
+	if ( not IsValid( pnl ) or not pnl:IsVisible() or not pointInsidePanel(pnl, getCursorPos()) ) then return false end
 
 	local handled = false
 	
