@@ -52,10 +52,10 @@ end
 
 local function getParents( pnl )
 	local parents = {}
-	local parent = pnl.Parent
+	local parent = pnl:GetParent()
 	while ( parent ) do
 		table.insert( parents, parent )
-		parent = parent.Parent
+		parent = parent:GetParent()
 	end
 	return parents
 end
@@ -86,17 +86,18 @@ end
 -- Input
 
 local inputWindows = {}
+local usedpanel = {}
 
 local function isMouseOver( pnl )
 	return pointInsidePanel( pnl, getCursorPos() )
 end
 
 local function postPanelEvent( pnl, event, ... )
-	if ( not pnl:IsValid() or not pointInsidePanel( pnl, getCursorPos() ) ) then return false end
-	
+	if ( not IsValid( pnl ) or not pointInsidePanel(pnl, getCursorPos()) ) then return false end
+
 	local handled = false
 	
-	for child in pairs( pnl.Childs or {} ) do
+	for i, child in pairs( pnl:GetChildren() ) do
 		if ( postPanelEvent( child, event, ... ) ) then
 			handled = true
 			break
@@ -105,6 +106,7 @@ local function postPanelEvent( pnl, event, ... )
 	
 	if ( not handled and pnl[ event ] ) then
 		pnl[ event ]( pnl, ... )
+		usedpanel[pnl] = {...}
 		return true
 	else
 		return false
@@ -124,7 +126,7 @@ local function checkHover( pnl, x, y )
 		if pnl.OnCursorExited then pnl:OnCursorExited() end
 	end
 
-	for child, _ in pairs( pnl.Childs or {} ) do
+	for i, child in pairs( pnl:GetChildren() ) do
 		if ( child:IsValid() and child:IsVisible() ) then checkHover( child, x, y ) end
 	end
 end
@@ -134,13 +136,15 @@ end
 hook.Add( "KeyPress", "VGUI3D2DMousePress", function( _, key )
 	if ( key == IN_USE ) then
 		for pnl in pairs( inputWindows ) do
-			if ( pnl:IsValid() ) then
+			if ( IsValid( pnl ) ) then
 				origin = pnl.Origin
 				scale = pnl.Scale
 				angle = pnl.Angle
 				normal = pnl.Normal
+
+				local key = input.IsKeyDown(KEY_LSHIFT) and MOUSE_RIGHT or MOUSE_LEFT
 				
-				postPanelEvent( pnl, "OnMousePressed", MOUSE_LEFT )
+				postPanelEvent( pnl, "OnMousePressed", key )
 			end
 		end
 	end
@@ -148,14 +152,18 @@ end )
 
 hook.Add( "KeyRelease", "VGUI3D2DMouseRelease", function( _, key )
 	if ( key == IN_USE ) then
-		for pnl in pairs( inputWindows ) do
-			if ( pnl:IsValid() ) then
+		for pnl, key in pairs( usedpanel ) do
+			if ( IsValid(pnl) ) then
 				origin = pnl.Origin
 				scale = pnl.Scale
 				angle = pnl.Angle
 				normal = pnl.Normal
-				
-				postPanelEvent( pnl, "OnMouseReleased", MOUSE_LEFT )
+
+				if ( pnl[ "OnMouseReleased" ] ) then
+					pnl[ "OnMouseReleased" ]( pnl, key[ 1 ] )
+				end
+
+				usedpanel[ pnl ] = nil
 			end
 		end
 	end
@@ -179,8 +187,8 @@ function vgui.Start3D2D( pos, ang, res )
 	cam.Start3D2D( pos, ang, res )
 end
 
-local _R = debug.getregistry()
-function _R.Panel:Paint3D2D()
+local Panel = FindMetaTable("Panel")
+function Panel:Paint3D2D()
 	if not self:IsValid() then return end
 	
 	-- Add it to the list of windows to receive input
@@ -238,6 +246,10 @@ end
 
 -- Keep track of child controls
 
+-- It's now useless
+-- http://wiki.garrysmod.com/page/Panel/GetChildren
+-- http://wiki.garrysmod.com/page/Panel/GetParent
+--[[ 
 if not vguiCreate then vguiCreate = vgui.Create end
 function vgui.Create( class, parent )
 	local pnl = vguiCreate( class, parent )
@@ -252,3 +264,4 @@ function vgui.Create( class, parent )
 	end
 	return pnl
 end
+--]] 
