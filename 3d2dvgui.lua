@@ -23,9 +23,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ]]--
 
 local origin = Vector(0, 0, 0)
-local angle = Vector(0, 0, 0)
+local angle = Angle(0, 0, 0)
 local normal = Vector(0, 0, 0)
 local scale = 0
+local maxrange = 0
 
 -- Helper functions
 
@@ -35,19 +36,15 @@ local function getCursorPos()
 	-- if there wasn't an intersection, don't calculate anything.
 	if not p then return 0, 0 end
 
-	local offset = origin - p
-	
-	local angle2 = angle:Angle()
-	angle2:RotateAroundAxis( normal, 90 )
-	angle2 = angle2:Forward()
-	
-	local offsetp = Vector(offset.x, offset.y, offset.z)
-	offsetp:Rotate(-normal:Angle())
+	if ( maxrange > 0 ) then
+		if ( p:Distance( LocalPlayer():EyePos() ) > maxrange ) then
+			return 0, 0
+		end
+	end
 
-    local x = -offsetp.y
-    local y = offsetp.z
+	local pos = WorldToLocal(p, Angle(0,0,0), origin, angle)
 
-	return x, y
+	return pos.x, -pos.y
 end
 
 local function getParents( pnl )
@@ -177,14 +174,15 @@ end )
 function vgui.Start3D2D( pos, ang, res )
 	origin = pos
 	scale = res
-	angle = ang:Forward()
-	
-	normal = Angle( ang.p, ang.y, ang.r )
-	normal:RotateAroundAxis( ang:Forward(), -90 )
-	normal:RotateAroundAxis( ang:Right(), 90 )
-	normal = normal:Forward()
+	angle = ang
+	normal = ang:Up()
+	maxrange = 0
 	
 	cam.Start3D2D( pos, ang, res )
+end
+
+function vgui.MaxRange3D2D( range )
+	maxrange = isnumber( range ) and range or 0
 end
 
 local Panel = FindMetaTable("Panel")
@@ -243,25 +241,3 @@ end
 function vgui.End3D2D()
 	cam.End3D2D()
 end
-
--- Keep track of child controls
-
--- It's now useless
--- http://wiki.garrysmod.com/page/Panel/GetChildren
--- http://wiki.garrysmod.com/page/Panel/GetParent
---[[ 
-if not vguiCreate then vguiCreate = vgui.Create end
-function vgui.Create( class, parent )
-	local pnl = vguiCreate( class, parent )
-	if not pnl then return end
-	
-	pnl.Parent = parent
-	pnl.Class = class
-	
-	if parent and type(parent) == "Panel" and IsValid(parent) then
-		if not parent.Childs then parent.Childs = {} end
-		parent.Childs[ pnl ] = true
-	end
-	return pnl
-end
---]] 
