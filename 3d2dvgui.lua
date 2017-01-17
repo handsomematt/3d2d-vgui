@@ -1,7 +1,7 @@
 --[[
 	
 3D2D VGUI Wrapper
-Copyright (c) 2015 Alexander Overvoorde, Matt Stevens
+Copyright (c) 2015-2017 Alexander Overvoorde, Matt Stevens
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in
@@ -185,11 +185,6 @@ hook.Add("KeyRelease", "VGUI3D2DMouseRelease", function(_, key)
 		end
 	end
 end)
-
--- Key input
-
--- TODO, OH DEAR.
--- Drawing:
 
 function vgui.Start3D2D(pos, ang, res)
 	origin = pos

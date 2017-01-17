@@ -1,7 +1,7 @@
---	3D2D vgui sample #3
---		By Overv
+-- 3D2D-VGUI --
+-- Example shows how to freeze the player and listen for their input in DTextEntry
 
-if ( !vgui.Start3D2D ) then include( "3d2dvgui.lua" ) end
+require "3d2dvgui"
 
 local tr = LocalPlayer():GetEyeTrace()
 local pos = tr.HitPos + tr.HitNormal * 4

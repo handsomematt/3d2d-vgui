@@ -1,7 +1,7 @@
---	3D2D vgui sample #2
---		By Overv
+-- 3D2D-VGUI --
+-- Example shows how to draw multiple DFrames in 3D world space.
 
-if ( !vgui.Start3D2D ) then include( "3d2dvgui.lua" ) end
+require "3d2dvgui"
 
 local origin = Vector( 300, -1919, 200 )
 
