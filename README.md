@@ -18,7 +18,8 @@ hook.Add( "PostDrawOpaqueRenderables", "DrawDemoFrame", function()
 	vgui.Start3D2D( Vector(), Angle(), 1 )
 		sampleFrame:Paint3D2D()
 	vgui.End3D2D()
-end )```
+end )
+```
 
 ## Bugs and feature requests
 
