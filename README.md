@@ -8,7 +8,7 @@ A simple library to draw VGUI panels in 3D space, created by [Alexander Overvoor
 
 You can find examples in the `samples` folder but the basic usage is as follows:
 
-```
+```lua
 local sampleFrame = vgui.Create( "DFrame" )
 sampleFrame:SetPos( 0, 0 )
 sampleFrame:SetSize( 200, 250 )
