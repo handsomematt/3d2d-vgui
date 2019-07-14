@@ -121,6 +121,8 @@ local function checkHover(pnl, x, y, found)
 
 	local validchild = false
 	for c, child in pairs(table.Reverse(pnl:GetChildren())) do
+		if not child:IsMouseInputEnabled() then continue end
+		
 		local check = checkHover(child, x, y, found or validchild)
 
 		if check then
