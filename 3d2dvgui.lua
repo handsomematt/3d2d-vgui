@@ -98,6 +98,8 @@ local function postPanelEvent(pnl, event, ...)
 	local handled = false
 	
 	for i, child in pairs(table.Reverse(pnl:GetChildren())) do
+		if not child:IsMouseInputEnabled() then continue end
+		
 		if postPanelEvent(child, event, ...) then
 			handled = true
 			break
